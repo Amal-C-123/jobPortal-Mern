@@ -284,6 +284,19 @@ module.exports = {
     }
   },
 
+  searchUser: async (req, res) => {
+    let payload = req.body.payload.trim();
+    let search = await User.find(
+      {
+        name: { $regex: new RegExp("^" + payload + ".*", "i") },
+        _id: { $ne: req.body.userId },
+      },
+      { name: 1, profile_pic: 1 }
+    ).exec();
+    search = search.slice(0, 10); //limit search to 10
+    return respbody(res, search);
+  },
+
   setProfile: async (req, res) => {
     const { section } = req.body;
     if (section === "profile-left") {
